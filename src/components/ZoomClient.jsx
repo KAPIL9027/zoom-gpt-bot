@@ -1,36 +1,35 @@
-import React from 'react'
+import {useState} from 'react'
 import ZoomMtgEmbedded from "@zoomus/websdk/embedded"
 const ZoomClient = () => {
+    const [meetingId,setMettingId] = useState('')
+    const [password,setPassword] = useState('')
+    const [userEmail,setUserEmail] = useState('')
 
     const client = ZoomMtgEmbedded.createClient()
-    let authEndpoint = ''
+    let authEndpoint = 'http://localhost:5000/getSignature'
     let sdkKey = 'y6XHYlYmQFmraSa7pAepfg'
-    let signature='Bt3BCyHLSKiV5FLEaxcr2fFxN4cuhmGO'
-    let meetingNumber = '2874532767'
-    let passWord = ''
     let role = 0
     let userName = 'React'
-    let userEmail = ''
     let registrantToken = ''
     let zakToken = ''
 
-//   function getSignature(e) {
-//     e.preventDefault();
+  function getSignature(e) {
+    e.preventDefault();
 
-//     fetch(authEndpoint, {
-//       method: 'POST',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({
-//         meetingNumber: meetingNumber,
-//         role: role
-//       })
-//     }).then(res => res.json())
-//     .then(response => {
-//       startMeeting(response.signature)
-//     }).catch(error => {
-//       console.error(error)
-//     })
-//   }
+    fetch(authEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        meetingNumber: meetingId,
+        role: role
+      })
+    }).then(res => res.json())
+    .then(response => {
+      startMeeting(response.signature)
+    }).catch(error => {
+      console.error(error)
+    })
+  }
 
   function startMeeting(signature) {
 
@@ -58,9 +57,9 @@ const ZoomClient = () => {
 
     client.join({
     	sdkKey: sdkKey,
-        signature:signature,
-    	meetingNumber: meetingNumber,
-    	password: passWord,
+      signature,
+    	meetingNumber: meetingId,
+    	password: password,
     	userName: userName,
         userEmail: userEmail,
         tk: registrantToken,
@@ -76,8 +75,15 @@ const ZoomClient = () => {
         <div id="meetingSDKElement">
           {/* Zoom Meeting SDK Component View Rendered Here */}
         </div>
-
-        <button onClick={startMeeting}>Join Meeting</button>
+        <div>
+          <label>MettingId</label>
+          <input type='text' value={meetingId} onChange={(e)=>{setMettingId(e.target.value)}}/>
+        </div>
+        <div>
+          <label>Passcode</label>
+          <input type='text' value={password} onChange={(e)=>{setPassword(e.target.value)}}/>
+        </div>
+        <button onClick={getSignature}>Join Meeting</button>
       </main>
     </div>
   )
